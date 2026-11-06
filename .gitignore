@@ -1,6 +1,5 @@
 # Dependencias instaladas localmente
 /node_modules/
-/public/
 
 # Archivos generados por Vite y otras herramientas
 /dist/
