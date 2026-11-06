@@ -1,0 +1,38 @@
+.arte-evento {
+  position: relative;
+  height: 176px;
+  overflow: hidden;
+  background-color: var(--fondo-inverso);
+  isolation: isolate;
+}
+
+.arte-evento::before,
+.arte-evento::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+}
+
+.arte-evento::before {
+  width: 70%;
+  aspect-ratio: 1;
+  top: -45%;
+  right: -20%;
+  border: 1px solid var(--color-css-rgb-255-255-255-12);
+  border-radius: 50%;
+}
+
+.arte-evento::after {
+  width: 50%;
+  aspect-ratio: 1;
+  bottom: -60%;
+  left: -18%;
+  border-radius: 50%;
+  background: var(--color-css-rgb-0-0-0-12);
+}
+
+@media (max-width: 640px) {
+  .tarjeta-evento .arte-evento {
+    height: 190px;
+  }
+}
