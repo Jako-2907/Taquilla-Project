@@ -1,0 +1,13 @@
+.saltar-contenido {
+  position: fixed;
+  top: var(--espacio-2);
+  left: var(--espacio-2);
+  transform: translateY(-180%);
+  padding: var(--espacio-3) 20px;
+  background: var(--acento);
+  color: var(--sobre-acento) !important;
+  z-index: 30;
+}
+.saltar-contenido:focus {
+  transform: translateY(0);
+}
