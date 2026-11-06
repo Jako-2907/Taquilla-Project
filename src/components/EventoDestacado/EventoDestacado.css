@@ -1,0 +1,55 @@
+.destacado-taquilla {
+  position: relative;
+  min-height: 22rem;
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+.destacado-taquilla > .arte-evento {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+.destacado-taquilla .arte-evento::before {
+  top: -15%;
+}
+.destacado-taquilla .arte-evento::after {
+  bottom: -25%;
+}
+.ficha-destacado {
+  position: absolute;
+  bottom: var(--espacio-4);
+  left: var(--espacio-4);
+  right: var(--espacio-4);
+  background: var(--fondo-superficie);
+  color: var(--texto-principal);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+}
+.ficha-destacado h2 {
+  font-size: 1.5rem;
+  margin: var(--espacio-3) 0;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.ficha-destacado > p {
+  color: var(--texto-secundario);
+  font-size: 0.875rem;
+}
+.ficha-destacado > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+.ficha-destacado strong {
+  font-weight: 500;
+}
+@media (max-width: 640px) {
+  .destacado-taquilla {
+    display: block;
+    min-height: 15rem;
+    margin-top: var(--espacio-6);
+  }
+  .ficha-destacado { left:var(--espacio-3); right:var(--espacio-3); bottom:var(--espacio-3); padding:var(--espacio-3); }
+  .ficha-destacado h2 { font-size:1.25rem; }
+}
