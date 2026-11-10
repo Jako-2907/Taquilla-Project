@@ -2,6 +2,34 @@ import Flecha from "../Flecha/Flecha.jsx";
 import TarjetaEvento from "../TarjetaEvento/TarjetaEvento.jsx";
 import "./SeccionEventos.css";
 
+function crearPaginas(paginaActual, totalPaginas) {
+  if (totalPaginas <= 5) {
+    return Array.from({ length: totalPaginas }, (_, indice) => indice + 1);
+  }
+
+  const primeraVisible = paginaActual <= 2 ? 1 : Math.max(2, paginaActual - 1);
+  const ultimaVisible =
+    paginaActual <= 2
+      ? Math.min(totalPaginas - 1, 3)
+      : paginaActual >= totalPaginas - 1
+        ? totalPaginas
+        : Math.min(totalPaginas - 1, paginaActual + 1);
+  const paginas = [1];
+
+  if (primeraVisible > 2) paginas.push("ellipsis");
+  for (
+    let pagina = Math.max(2, primeraVisible);
+    pagina <= Math.min(totalPaginas - 1, ultimaVisible);
+    pagina += 1
+  ) {
+    paginas.push(pagina);
+  }
+  if (ultimaVisible < totalPaginas - 1) paginas.push("ellipsis");
+  paginas.push(totalPaginas);
+
+  return paginas;
+}
+
 export default function SeccionEventos({
   id,
   titulo,
@@ -79,23 +107,43 @@ export default function SeccionEventos({
       {!cargando && !error && paginacion && paginacion.paginas > 1 && (
         <nav className="paginacion-eventos" aria-label={textos.componentePaginacion.aria.etiqueta}>
           <button
-            className="boton-home secundario"
+            className="paginacion-eventos__boton"
             disabled={paginacion.pagina <= 1}
             onClick={() => onCambiarPagina(paginacion.pagina - 1)}
             aria-label={textos.componentePaginacion.aria.anterior}
           >
-            {textos.componentePaginacion.aria.anterior}
+            <span className="icono-paginacion icono-paginacion--anterior" aria-hidden="true" />
           </button>
-          <span aria-live="polite">
-            {textos.componentePaginacion.aria.paginaActual.replace("{numero}", paginacion.pagina)}
-          </span>
+          {crearPaginas(paginacion.pagina, paginacion.paginas).map((pagina, indice) =>
+            pagina === "ellipsis" ? (
+              <span className="paginacion-eventos__ellipsis" aria-hidden="true" key={`ellipsis-${indice}`}>
+                …
+              </span>
+            ) : (
+              <button
+                className={`paginacion-eventos__boton paginacion-eventos__pagina${
+                  pagina === paginacion.pagina ? " paginacion-eventos__pagina--actual" : ""
+                }`}
+                type="button"
+                key={pagina}
+                aria-label={textos.componentePaginacion.aria.paginaActual.replace(
+                  "{numero}",
+                  pagina,
+                )}
+                aria-current={pagina === paginacion.pagina ? "page" : undefined}
+                onClick={() => onCambiarPagina(pagina)}
+              >
+                {pagina}
+              </button>
+            ),
+          )}
           <button
-            className="boton-home secundario"
+            className="paginacion-eventos__boton"
             disabled={paginacion.pagina >= paginacion.paginas}
             onClick={() => onCambiarPagina(paginacion.pagina + 1)}
             aria-label={textos.componentePaginacion.aria.siguiente}
           >
-            {textos.componentePaginacion.aria.siguiente}
+            <span className="icono-paginacion icono-paginacion--siguiente" aria-hidden="true" />
           </button>
         </nav>
       )}
