@@ -13,6 +13,33 @@ body {
   min-height: 100dvh;
   place-items: center;
 }
+.estado-inicial {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: var(--espacio-6);
+  background: var(--fondo-pagina);
+  color: var(--texto-principal);
+  text-align: center;
+}
+.estado-inicial > div {
+  width: min(100%, 32rem);
+  padding: var(--espacio-8);
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-lg);
+  background: var(--fondo-superficie);
+}
+.estado-inicial h1 { margin: 0 0 var(--espacio-3); font-size: 1.5rem; }
+.estado-inicial p { margin: 0 0 var(--espacio-6); color: var(--texto-secundario); overflow-wrap: anywhere; }
+.estado-inicial button {
+  min-height: 2.75rem;
+  padding: var(--espacio-2) var(--espacio-6);
+  border: 0;
+  border-radius: var(--radio-md);
+  background: var(--marca-primario);
+  color: var(--texto-inverso);
+  cursor: pointer;
+}
 .indicador-carga {
   width: 2rem;
   aspect-ratio: 1;

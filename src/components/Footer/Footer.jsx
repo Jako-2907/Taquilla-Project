@@ -12,7 +12,7 @@ export default function Footer({ nombre, tipo, destino, onCuenta, textos }) {
           </div>
           <div>
             <h3>{textos.footer.columnas.explora.titulo}</h3>
-            <a href="#contenido">{textos.footer.columnas.explora.enlaces.inicio}</a>
+            <a href="/">{textos.footer.columnas.explora.enlaces.inicio}</a>
             <a href={destino}>{textos.footer.columnas.explora.enlaces.explorar}</a>
           </div>
           <div>

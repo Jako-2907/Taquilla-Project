@@ -22,6 +22,7 @@ export function PreferenciasProvider({ children }) {
   const [textos, setTextos] = useState(null);
   const [errorTextos, setErrorTextos] = useState(null);
   const [cargandoTextos, setCargandoTextos] = useState(true);
+  const [intentoTextos, setIntentoTextos] = useState(0);
   useEffect(() => {
     document.documentElement.lang = idioma;
     const controlador = new AbortController();
@@ -29,7 +30,12 @@ export function PreferenciasProvider({ children }) {
     setErrorTextos(null);
     setTextos(null);
     consultar(`/textos?idioma=${idioma}`, { signal: controlador.signal })
-      .then((respuesta) => setTextos(respuesta.textos))
+      .then((respuesta) => {
+        if (!respuesta?.textos || typeof respuesta.textos !== "object") {
+          throw new Error("La API no devolvió los textos de interfaz esperados.");
+        }
+        setTextos(respuesta.textos);
+      })
       .catch((errorSolicitud) => {
         if (errorSolicitud.name !== "AbortError") setErrorTextos(errorSolicitud);
       })
@@ -37,7 +43,7 @@ export function PreferenciasProvider({ children }) {
         if (!controlador.signal.aborted) setCargandoTextos(false);
       });
     return () => controlador.abort();
-  }, [idioma]);
+  }, [idioma, intentoTextos]);
   useEffect(() => {
     const titulo = textos?.paginas?.inicio?.seo?.titulo;
     if (titulo) document.title = titulo;
@@ -76,6 +82,7 @@ export function PreferenciasProvider({ children }) {
         textos,
         errorTextos,
         cargandoTextos,
+        reintentarTextos: () => setIntentoTextos((intento) => intento + 1),
       }}
     >
       {children}

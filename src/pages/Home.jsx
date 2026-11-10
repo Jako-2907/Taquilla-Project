@@ -10,7 +10,7 @@ import { useRecurso } from "../hooks/useRecurso.js";
 import FiltrosExplorar from "../components/FiltrosExplorar/FiltrosExplorar.jsx";
 
 export default function Home() {
-  const { idioma, textos, errorTextos, cargandoTextos } = usePreferencias();
+  const { idioma, textos, errorTextos, cargandoTextos, reintentarTextos } = usePreferencias();
   const abrirCuenta = (tipo) => {
     window.location.assign(tipo === "registro" ? "/crear-cuenta" : "/iniciar-sesion");
   };
@@ -33,7 +33,19 @@ export default function Home() {
   }, [textos, busqueda.filtros]);
 
   if (!textos) {
-    if (errorTextos) return <p role="alert">{errorTextos.message}</p>;
+    if (errorTextos) {
+      return (
+        <main className="estado-inicial estado-inicial--error" role="alert">
+          <div>
+            <h1>No se pudo cargar Taquilla</h1>
+            <p>{errorTextos.message}</p>
+            <button type="button" onClick={reintentarTextos}>
+              Reintentar
+            </button>
+          </div>
+        </main>
+      );
+    }
     return (
       <main className="carga-inicial" role="status" aria-busy={cargandoTextos}>
         <span className="indicador-carga" aria-hidden="true" />
