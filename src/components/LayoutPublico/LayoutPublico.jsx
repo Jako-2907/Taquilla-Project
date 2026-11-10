@@ -6,7 +6,7 @@ import GestorCookies from "../GestorCookies/GestorCookies.jsx";
 import SaltarContenido from "../SaltarContenido/SaltarContenido.jsx";
 import "./LayoutPublico.css";
 
-export default function LayoutPublico({ destino, onCuenta, children }) {
+export default function LayoutPublico({ destino, onCuenta, onExplorar, children }) {
   const { idioma, cambiarIdioma, textos } = usePreferencias();
   if (!textos) return null;
 
@@ -20,6 +20,7 @@ export default function LayoutPublico({ destino, onCuenta, children }) {
         onCambiarIdioma={cambiarIdioma}
         destino={destino}
         onCuenta={onCuenta}
+        onExplorar={onExplorar}
         textos={textos}
       />
       <main id="contenido" tabIndex={-1}>
@@ -31,6 +32,7 @@ export default function LayoutPublico({ destino, onCuenta, children }) {
         idioma={idioma}
         destino={destino}
         onCuenta={onCuenta}
+        onExplorar={onExplorar}
         textos={textos}
       />
       <GestorCookies />

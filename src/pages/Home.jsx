@@ -76,6 +76,12 @@ export default function Home() {
     busqueda.buscar({});
   }
 
+  function abrirExplorar() {
+    if (window.location.pathname !== "/explorar") {
+      busqueda.buscar({});
+    }
+  }
+
   function aplicarBusqueda(valores) {
     const { fecha, ...resto } = valores;
     busqueda.buscar({
@@ -88,7 +94,7 @@ export default function Home() {
   }
 
   return (
-    <LayoutPublico destino="/explorar" onCuenta={abrirCuenta}>
+    <LayoutPublico destino="/explorar" onCuenta={abrirCuenta} onExplorar={abrirExplorar}>
       {!esExplorar && (
         <HeroTaquilla
           textos={pagina.hero}

@@ -1,7 +1,7 @@
 import Marca from "../Marca/Marca.jsx";
 import "./Footer.css";
 
-export default function Footer({ nombre, tipo, destino, onCuenta, textos }) {
+export default function Footer({ nombre, tipo, destino, onCuenta, onExplorar, textos }) {
   return (
     <footer className="pie-home">
       <div className="ancho-home">
@@ -13,7 +13,23 @@ export default function Footer({ nombre, tipo, destino, onCuenta, textos }) {
           <div>
             <h3>{textos.footer.columnas.explora.titulo}</h3>
             <a href="/">{textos.footer.columnas.explora.enlaces.inicio}</a>
-            <a href={destino}>{textos.footer.columnas.explora.enlaces.explorar}</a>
+            <a
+              href={destino}
+              onClick={(evento) => {
+                if (
+                  !onExplorar ||
+                  evento.button !== 0 ||
+                  evento.metaKey ||
+                  evento.ctrlKey ||
+                  evento.shiftKey ||
+                  evento.altKey
+                ) return;
+                evento.preventDefault();
+                onExplorar();
+              }}
+            >
+              {textos.footer.columnas.explora.enlaces.explorar}
+            </a>
           </div>
           <div>
             <h3>{textos.footer.columnas.cuenta.titulo}</h3>

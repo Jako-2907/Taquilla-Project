@@ -12,6 +12,7 @@ export default function Navbar({
   onCambiarIdioma,
   destino,
   onCuenta,
+  onExplorar,
   textos,
 }) {
   const [abierto, setAbierto] = useState(false);
@@ -54,7 +55,19 @@ export default function Navbar({
           <a
             href={destino}
             aria-current={window.location.pathname === "/explorar" ? "page" : undefined}
-            onClick={() => setAbierto(false)}
+            onClick={(evento) => {
+              setAbierto(false);
+              if (
+                !onExplorar ||
+                evento.button !== 0 ||
+                evento.metaKey ||
+                evento.ctrlKey ||
+                evento.shiftKey ||
+                evento.altKey
+              ) return;
+              evento.preventDefault();
+              onExplorar();
+            }}
           >
             {t.navbar.enlaces.explorar}
           </a>
