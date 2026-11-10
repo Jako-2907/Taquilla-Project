@@ -1,27 +1,27 @@
 # Taquilla
 
-Frontend para descubrir eventos. Este repositorio conserva su implementación existente con React y Vite; este Sprint conecta la página pública con la API oficial y consume desde ella los textos de interfaz en español e inglés.
+Desarrollé Taquilla como una aplicación frontend para descubrir eventos. Usé React y Vite. La interfaz consulta una API para obtener eventos, categorías, ciudades y textos en español e inglés.
 
 ## Requisitos
 
-- Node.js 20.19+ o 22.12+.
+- Node.js 20.19 o superior, o Node.js 22.12 o superior.
 - npm.
 
-## Configuración
+## Instalación
 
 ```sh
 npm ci
 ```
 
-Copia `.env.example` como `.env.local` y configura la dirección base de la API si necesitas usar otro entorno:
+La aplicación usa esta API por defecto. Si necesito otra dirección, creo `.env.local` en la raíz y defino `VITE_API_BASE_URL`:
 
 ```env
 VITE_API_BASE_URL=https://yanethm-taquilla-api.fly.dev/api/v1
 ```
 
-Vite carga las variables `VITE_*` en el cliente. No guardes credenciales en este archivo.
+Vite expone al navegador las variables que empiezan con `VITE_`. No guardo credenciales en ellas.
 
-## Desarrollo y producción
+## Comandos
 
 ```sh
 npm run dev
@@ -29,19 +29,30 @@ npm run build
 npm run preview
 ```
 
-## Integración
+`npm run dev` inicia el servidor local. `npm run build` genera la versión de producción y `npm run preview` permite revisar esa versión.
 
-- `src/services/api.js`: cliente HTTP y errores del contrato.
-- `src/context/PreferenciasContext.jsx`: idioma, textos de API y consentimiento.
-- `src/hooks/useRecurso.js`: carga de recursos con cancelación y reintento.
-- `src/hooks/useEventos.js`: filtros y paginación de `/eventos`, sincronizados con la URL.
-- `src/pages/Home.jsx`: vistas `/` y `/explorar`.
-- `src/styles/tokens.css`: tokens visuales y escala de texto accesible.
+## Estructura del proyecto
 
-La portada consulta `/eventos/destacados`, `/categorias`, `/ciudades` y `/textos?idioma=es|en`. Explorar envía a `/eventos` únicamente los filtros definidos en el contrato: categoría, ciudad, búsqueda, orden y paginación. El diseño de referencia también muestra filtros por fecha y precio, pero esos parámetros no aparecen en el contrato vigente de la API.
+- `src/main.jsx`: carga los estilos globales, crea la raíz de React y envuelve la aplicación con `PreferenciasProvider`.
+- `src/pages/Home.jsx`: arma la página principal y la vista `/explorar`. La vista depende de `window.location.pathname`; el proyecto no usa una librería de rutas.
+- `src/components/`: guarda los componentes de interfaz. La mayoría tiene su hoja CSS en la misma carpeta.
+- `src/context/PreferenciasContext.jsx`: comparte el idioma, los textos de interfaz, el consentimiento de cookies y las funciones para modificarlos.
+- `src/hooks/useRecurso.js`: consulta un recurso y expone sus datos, el estado de carga, el error y la función para reintentar.
+- `src/hooks/useEventos.js`: consulta eventos y administra los filtros, la paginación y la sincronización de la búsqueda con la URL.
+- `src/services/api.js`: centraliza las llamadas con `fetch`, valida el tipo de respuesta y prepara los errores.
+- `src/services/cookies.js`: lee, guarda y borra cookies.
+- `src/config/proyecto.js`: define el nombre, el identificador y la dirección base de la API.
+- `src/styles/`: contiene los estilos generales, los tokens visuales y la escala de texto.
+- `public/assets/recursos-taquilla/`: contiene los iconos, logos y otros recursos gráficos.
 
-Los textos de interfaz provienen de `/textos`; los nombres del catálogo se muestran como los devuelve la API. Las decisiones de cookies se guardan en `consentimiento` y, solo al aceptar, el idioma elegido se guarda en `idioma`.
+## Flujo de datos
 
-Los tokens oficiales de Figma están en `src/styles/tokens.css`; los iconos y logos entregados para el proyecto se sirven desde `public/assets/recursos-taquilla/`. `vercel.json` reescribe `/explorar` a la entrada de la SPA para que la ruta directa funcione en Vercel.
+`main.jsx` monta `Home` dentro del contexto de preferencias. `Home` usa `useRecurso` para pedir destacados, categorías y ciudades, y usa `useEventos` para consultar y filtrar eventos. Ambos hooks llaman a `consultar`, que está en `services/api.js`. Luego `Home` pasa los datos y las funciones como props a componentes como `SeccionEventos`, `BuscadorEventos`, `FiltrosExplorar` y `TarjetaEvento`.
 
-El panel de accesibilidad permite cambiar el tamaño del texto, alto contraste, movimiento, subrayado de enlaces y espaciado de lectura. Las preferencias se guardan en este dispositivo.
+La portada consulta `/eventos/destacados`, `/categorias` y `/ciudades`. El contexto consulta `/textos?idioma=es` o `/textos?idioma=en`. La vista `/explorar` consulta `/eventos` con búsqueda, categoría, ciudad, orden y paginación.
+
+## Idioma, cookies y accesibilidad
+
+`PreferenciasContext` administra el idioma y los textos de la interfaz. `services/cookies.js` permite guardar el consentimiento y, cuando la persona acepta, conservar el idioma. El componente `Accesibilidad` ofrece controles de tamaño de texto, contraste, movimiento, subrayado de enlaces y espaciado de lectura.
+
+Los nombres de categorías y ciudades se muestran como los devuelve la API. Los iconos y logos se sirven desde `public/assets/recursos-taquilla/`.
