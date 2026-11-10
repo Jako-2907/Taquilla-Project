@@ -1,3 +1,0 @@
-{
-  "rewrites": [{ "source": "/explorar", "destination": "/index.html" }]
-}
