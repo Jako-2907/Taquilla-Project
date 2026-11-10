@@ -31,6 +31,10 @@ npm run preview
 
 `npm run dev` inicia el servidor local. `npm run build` genera la versión de producción y `npm run preview` permite revisar esa versión.
 
+## Despliegue en Vercel
+
+`vercel.json` reescribe `/explorar` a la entrada de la aplicación. Así Vercel sirve la SPA cuando abro o recargo una URL como `/explorar?categoria=teatro`, y React conserva los parámetros para cargar los filtros.
+
 ## Estructura del proyecto
 
 - `src/main.jsx`: carga los estilos globales, crea la raíz de React y envuelve la aplicación con `PreferenciasProvider`.
