@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import EstadoVista from "../components/EstadoVista/EstadoVista";
 import { useState } from "react";
 import AficheEvento from "../components/AficheEvento/AficheEvento";
 import IconoEvento from "../components/IconoEvento/IconoEvento";
@@ -12,10 +14,11 @@ import "./VistaDetalle.css";
 export default function VistaDetalle({ evento, relacionados, categorias }: {
   evento: DetalleEvento; relacionados: Evento[] | null; categorias: Categoria[];
 }) {
+  const router = useRouter();
   const { idioma, textos } = usePreferencias();
   const [politicas, setPoliticas] = useState(false);
   const [expandido, setExpandido] = useState(false);
-  if (!textos) return null;
+  if (!textos) return <EstadoVista estado="cargando" />;
   const t = textos.paginas.detalleEvento;
   const acciones = textos.general.acciones;
   const zona = { timeZone: "America/Bogota" };
@@ -115,6 +118,7 @@ export default function VistaDetalle({ evento, relacionados, categorias }: {
                 <ul>{evento.localidades.map((localidad) => <li key={localidad.id}>{localidad.nombre} · {precio.format(localidad.precio)} · {disponibilidad(localidad.disponibles, localidad.agotada)}</li>)}</ul>
               )}
             </div>
+            {relacionados === null && <EstadoVista estado="error" onReintentar={() => router.refresh()} />}
             {relacionados && relacionados.length > 0 && (
               <section>
                 <h2>{t.relacionados.titulo}</h2>

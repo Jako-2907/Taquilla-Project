@@ -20,6 +20,7 @@ export function useEventos() {
     typeof window === "undefined" ? 1 : Math.max(1, Number(new URLSearchParams(window.location.search).get("pagina")) || 1),
   );
   const [resultado, setResultado] = useState<Resultado>({ datos: [], paginacion: null });
+  const [solicitada, setSolicitada] = useState<{ ruta: string; intento: number } | null>(null);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [intento, setIntento] = useState(0);
@@ -65,6 +66,7 @@ export function useEventos() {
   useEffect(() => {
     if (!consulta) return;
     const controlador = new AbortController();
+    setSolicitada({ ruta: consulta, intento });
     setCargando(true);
     setError(null);
     consultar<Resultado>(consulta, { signal: controlador.signal })
@@ -90,12 +92,13 @@ export function useEventos() {
     document.getElementById("eventos")?.scrollIntoView({ block: "start" });
   }
 
+  const vigente = solicitada?.ruta === consulta && solicitada.intento === intento;
   return {
     filtros,
-    resultados: resultado.datos,
-    paginacion: resultado.paginacion,
-    cargando,
-    error,
+    resultados: vigente ? resultado.datos : [],
+    paginacion: vigente ? resultado.paginacion : null,
+    cargando: consulta !== null && (!vigente || cargando),
+    error: vigente ? error : null,
     buscar,
     setFiltros: buscar,
     cambiarPagina: setPagina,

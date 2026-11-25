@@ -6,7 +6,7 @@ import {
   guardarCookie,
   borrarCookie,
 } from "../services/cookies";
-import { consultar } from "../services/api";
+import { obtenerEstados, obtenerTextos } from "../services/textos";
 
 import type { ReactNode } from "react";
 import type { Consentimiento, Idioma } from "../types/api";
@@ -19,6 +19,7 @@ interface Preferencias {
   guardarConsentimiento: (permitir: boolean) => boolean;
   error: boolean;
   textos: Textos | null;
+  estados: Textos["estados"] | null;
   errorTextos: Error | null;
   cargandoTextos: boolean;
   reintentarTextos: () => void;
@@ -37,30 +38,29 @@ export function PreferenciasProvider({ children }: { children: ReactNode }) {
       : "es",
   );
   const [error, setError] = useState(false);
-  const [textos, setTextos] = useState<Textos | null>(null);
+  const [catalogo, setCatalogo] = useState<{ idioma: Idioma; textos: Textos } | null>(null);
+  const [estados, setEstados] = useState<{ idioma: Idioma; textos: Textos["estados"] } | null>(null);
+  const textos = catalogo?.idioma === idioma ? catalogo.textos : null;
   const [errorTextos, setErrorTextos] = useState<Error | null>(null);
   const [cargandoTextos, setCargandoTextos] = useState(true);
   const [intentoTextos, setIntentoTextos] = useState(0);
   useEffect(() => {
     document.documentElement.lang = idioma;
-    const controlador = new AbortController();
+    let vigente = true;
     setCargandoTextos(true);
     setErrorTextos(null);
-    setTextos(null);
-    consultar<{ textos: Textos }>(`/textos?idioma=${idioma}`, { signal: controlador.signal })
-      .then((respuesta) => {
-        if (!respuesta?.textos || typeof respuesta.textos !== "object") {
-          throw new Error("La API no devolvió los textos de interfaz esperados.");
-        }
-        setTextos(respuesta.textos);
-      })
+    obtenerEstados(idioma).then((textos) => {
+      if (vigente) setEstados({ idioma, textos });
+    }, () => undefined);
+    obtenerTextos(idioma)
+      .then((textos) => { if (vigente) setCatalogo({ idioma, textos }); })
       .catch((errorSolicitud) => {
-        if (errorSolicitud.name !== "AbortError") setErrorTextos(errorSolicitud);
+        if (vigente) setErrorTextos(errorSolicitud);
       })
       .finally(() => {
-        if (!controlador.signal.aborted) setCargandoTextos(false);
+        if (vigente) setCargandoTextos(false);
       });
-    return () => controlador.abort();
+    return () => { vigente = false; };
   }, [idioma, intentoTextos]);
   function cambiarIdioma(valor: Idioma) {
     setIdioma(valor);
@@ -94,6 +94,7 @@ export function PreferenciasProvider({ children }: { children: ReactNode }) {
         guardarConsentimiento,
         error,
         textos,
+        estados: estados?.idioma === idioma ? estados.textos : null,
         errorTextos,
         cargandoTextos,
         reintentarTextos: () => setIntentoTextos((intento) => intento + 1),

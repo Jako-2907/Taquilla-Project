@@ -1,3 +1,4 @@
+import EstadoVista from "../EstadoVista/EstadoVista";
 import Flecha from "../Flecha/Flecha";
 import TarjetaEvento from "../TarjetaEvento/TarjetaEvento";
 import "./SeccionEventos.css";
@@ -80,19 +81,8 @@ export default function SeccionEventos({
           </button>
         )}
       </div>
-      {cargando && (
-        <p role="status" aria-live="polite">
-          {textos.estados.cargando.texto}
-        </p>
-      )}
-      {error && (
-        <div role="alert">
-          <p>{textos.estados.error.texto}</p>
-          <button className="boton-home secundario" onClick={onReintentar}>
-            {textos.estados.error.botones.reintentar}
-          </button>
-        </div>
-      )}
+      {cargando && <EstadoVista estado="cargando" />}
+      {error && <EstadoVista estado="error" error={error} onReintentar={onReintentar} />}
       {!cargando && !error && eventos.length > 0 && (
         <div className="eventos-grid">
           {eventos.map((evento) => (

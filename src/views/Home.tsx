@@ -10,10 +10,11 @@ import SeccionEventos from "../components/SeccionEventos/SeccionEventos";
 import { usePreferencias } from "../context/PreferenciasContext";
 import { useEventos } from "../hooks/useEventos";
 import { useRecurso } from "../hooks/useRecurso";
+import EstadoVista from "../components/EstadoVista/EstadoVista";
 import FiltrosExplorar from "../components/FiltrosExplorar/FiltrosExplorar";
 
 export default function Home() {
-  const { idioma, textos, errorTextos, cargandoTextos, reintentarTextos } = usePreferencias();
+  const { idioma, textos, errorTextos, reintentarTextos } = usePreferencias();
   const abrirCuenta = (tipo: TipoCuenta) => {
     window.location.assign(tipo === "registro" ? "/crear-cuenta" : "/iniciar-sesion");
   };
@@ -42,23 +43,9 @@ export default function Home() {
 
   if (!textos) {
     if (errorTextos) {
-      return (
-        <main className="estado-inicial estado-inicial--error" role="alert">
-          <div>
-            <h1>No se pudo cargar Taquilla</h1>
-            <p>{errorTextos.message}</p>
-            <button type="button" onClick={reintentarTextos}>
-              Reintentar
-            </button>
-          </div>
-        </main>
-      );
+      return <main><EstadoVista estado="error" error={errorTextos} onReintentar={reintentarTextos} /></main>;
     }
-    return (
-      <main className="carga-inicial" role="status" aria-busy={cargandoTextos}>
-        <span className="indicador-carga" aria-hidden="true" />
-      </main>
-    );
+    return <main><EstadoVista estado="cargando" /></main>;
   }
 
   const pagina = textos.paginas.inicio;
@@ -130,12 +117,12 @@ export default function Home() {
       {esExplorar && (
         <section className="explorar-cabecera ancho-home">
           <h1>{paginaExplorar.seo.titulo}</h1>
-          <p role="status">
+          {!busqueda.cargando && !busqueda.error && <p role="status">
             {(busqueda.paginacion?.total === 1
               ? paginaExplorar.resultados.uno
               : paginaExplorar.resultados.otro
             ).replace("{cantidad}", String(busqueda.paginacion?.total ?? 0))}
-          </p>
+          </p>}
           <label className="orden-explorar">
             <span>{paginaExplorar.orden.etiqueta}</span>
             <select value={busqueda.filtros?.orden ?? "fecha"} onChange={(evento) => busqueda.buscar({ ...busqueda.filtros, orden: evento.target.value })}>
@@ -185,7 +172,7 @@ export default function Home() {
           }
           descripcion={
             busqueda.filtros
-              ? (busqueda.paginacion?.total === 1
+              ? busqueda.cargando || busqueda.error ? undefined : (busqueda.paginacion?.total === 1
                   ? paginaExplorar.resultados.uno
                   : paginaExplorar.resultados.otro
                 ).replace("{cantidad}", String(busqueda.paginacion?.total ?? 0))
