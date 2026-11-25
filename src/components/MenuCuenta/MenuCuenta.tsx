@@ -13,6 +13,8 @@ export default function MenuCuenta() {
   const control = useRef<HTMLElement>(null);
   if (!usuario || !textos) return null;
   const t = textos.navbar.usuario;
+  const iniciales = usuario.nombre.trim().split(/\s+/).slice(0, 2)
+    .map((parte) => Array.from(parte)[0] ?? "").join("").toLocaleUpperCase();
 
   async function salir() {
     setCerrando(true);
@@ -29,10 +31,20 @@ export default function MenuCuenta() {
       control.current?.focus();
     }}>
       <summary ref={control} aria-label={t.menu.replace("{nombre}", usuario.nombre)}>
-        <IconoEvento tipo="usuario" /> <span>{usuario.nombre}</span>
+        <span className="menu-cuenta__avatar" aria-hidden="true">{iniciales}</span>
       </summary>
       <div className="menu-cuenta__contenido">
-        <button type="button" disabled={cerrando} onClick={salir}>{t.cerrarSesion}</button>
+        <div className="menu-cuenta__perfil">
+          <span className="menu-cuenta__avatar" aria-hidden="true">{iniciales}</span>
+          <div>
+            <strong>{usuario.nombre}</strong>
+            <small>{usuario.correo}</small>
+          </div>
+        </div>
+        <button type="button" disabled={cerrando} onClick={salir}>
+          <span className="menu-cuenta__salir"><IconoEvento tipo="flecha" /></span>
+          {t.cerrarSesion}
+        </button>
         {error && <p role="alert">{textos.errores.generico}</p>}
       </div>
     </details>

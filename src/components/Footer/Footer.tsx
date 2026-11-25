@@ -3,7 +3,7 @@ import "./Footer.css";
 
 import type { NavegacionProps } from "../../types/api";
 
-export default function Footer({ nombre, tipo, destino, onCuenta, onExplorar, textos }: NavegacionProps) {
+export default function Footer({ tipo, destino, onCuenta, onExplorar, textos, onAccesibilidad }: NavegacionProps & { onAccesibilidad: () => void }) {
   return (
     <footer className="pie-home">
       <div className="ancho-home">
@@ -41,6 +41,11 @@ export default function Footer({ nombre, tipo, destino, onCuenta, onExplorar, te
             <button onClick={() => onCuenta("registro")}>
               {textos.footer.columnas.cuenta.enlaces.crearCuenta}
             </button>
+          </div>
+          <div>
+            <h3>{textos.footer.columnas.legal.titulo}</h3>
+            <span className="pie-terminos">{textos.footer.columnas.legal.enlaces.terminos}</span>
+            <button type="button" onClick={onAccesibilidad}>{textos.footer.columnas.legal.enlaces.accesibilidad}</button>
           </div>
         </div>
         <div className="pie-creditos">

@@ -30,7 +30,6 @@
 .detalle-datos .detalle-dato-movil, .detalle-portada__acciones, .detalle-leer { display: none; }
 
 @media (max-width: 640px) {
-  .landing:has(.detalle-evento) .cabecera-home { display: none; }
   .detalle-evento { width: 100%; padding: 0; background: var(--superficie); }
   .detalle-migas, .detalle-pestanas, .detalle-ciudad, .detalle-datos dt, .detalle-datos .detalle-dato-hora { display: none; }
   .detalle-portada .detalle-afiche { height: clamp(230px, 72vw, 340px); border-radius: 0; }

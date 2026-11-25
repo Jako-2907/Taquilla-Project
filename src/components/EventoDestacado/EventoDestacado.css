@@ -11,6 +11,8 @@
 }
 .destacado-taquilla .arte-evento::before {
   top: -15%;
+  border: 0;
+  background: var(--color-css-rgb-255-255-255-12);
 }
 .destacado-taquilla .arte-evento::after {
   bottom: -25%;
@@ -42,6 +44,12 @@
   gap: var(--espacio-3);
 }
 .ficha-destacado strong {
+  font-weight: 500;
+}
+.ficha-destacado .boton-home {
+  min-height: 36px;
+  padding: var(--espacio-2) var(--espacio-4);
+  border-radius: var(--radio-md);
   font-weight: 500;
 }
 @media (max-width: 640px) {

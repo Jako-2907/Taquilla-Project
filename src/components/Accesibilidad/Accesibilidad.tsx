@@ -21,12 +21,20 @@ function leerPreferencias(): typeof INICIAL {
 
 import type { Textos } from "../../types/textos";
 
-export default function Accesibilidad({ textos }: { textos: Textos }) {
-  const [abierto, setAbierto] = useState(false);
+export default function Accesibilidad({ textos, abierto, setAbierto }: {
+  textos: Textos;
+  abierto: boolean;
+  setAbierto: (abierto: boolean) => void;
+}) {
   const [preferencias, setPreferencias] = useState(leerPreferencias);
   const boton = useRef<HTMLButtonElement>(null);
+  const cerrar = useRef<HTMLButtonElement>(null);
   const id = useId();
   const t = textos.accesibilidad;
+
+  useEffect(() => {
+    if (abierto) cerrar.current?.focus();
+  }, [abierto]);
 
   useEffect(() => {
     const raiz = document.documentElement;
@@ -48,6 +56,7 @@ export default function Accesibilidad({ textos }: { textos: Textos }) {
 
   function manejarTecla(evento: React.KeyboardEvent) {
     if (evento.key === "Escape") {
+      evento.stopPropagation();
       setAbierto(false);
       boton.current?.focus();
     }
@@ -69,7 +78,7 @@ export default function Accesibilidad({ textos }: { textos: Textos }) {
         aria-expanded={abierto}
         aria-controls={id}
         aria-label={textos.navbar.aria.accesibilidad}
-        onClick={() => setAbierto((valor) => !valor)}
+        onClick={() => setAbierto(!abierto)}
       >
         <IconoEvento tipo="persona" />
       </button>
@@ -83,6 +92,7 @@ export default function Accesibilidad({ textos }: { textos: Textos }) {
         <header className="accesibilidad__encabezado">
           <h2>{t.titulo}</h2>
           <button
+            ref={cerrar}
             type="button"
             className="accesibilidad__cerrar"
             aria-label={textos.general.acciones.cerrar}
