@@ -5,7 +5,7 @@ import type { Usuario } from "../../../types/api";
 const sinCache = { "Cache-Control": "no-store" };
 const DURACION_SESION = 12 * 60 * 60;
 
-export function publicacionSegura(request: NextRequest) {
+function publicacionSegura(request: NextRequest) {
   const origen = request.headers.get("origin");
   return request.headers.get("sec-fetch-site") !== "cross-site" && (!origen || origen === request.nextUrl.origin);
 }
