@@ -21,8 +21,16 @@ export default function Navbar({
   onCuenta,
   onExplorar,
   textos,
-}: NavegacionProps & { idioma: Idioma; onCambiarIdioma: (idioma: Idioma) => void }) {
+  accesibilidadAbierta,
+  onAccesibilidad,
+}: NavegacionProps & {
+  idioma: Idioma;
+  onCambiarIdioma: (idioma: Idioma) => void;
+  accesibilidadAbierta: boolean;
+  onAccesibilidad: (abierta: boolean) => void;
+}) {
   const [abierto, setAbierto] = useState(false);
+  const menuVisible = abierto || accesibilidadAbierta;
   const boton = useRef<HTMLButtonElement>(null);
   const id = useId();
   const { usuario, verificando } = useSesion();
@@ -44,15 +52,18 @@ export default function Navbar({
           {t.navbar.botones.ingresar}
         </button>}
         <MenuMovil
-          abierto={abierto}
-          onAlternar={() => setAbierto(!abierto)}
+          abierto={menuVisible}
+          onAlternar={() => {
+            setAbierto(!menuVisible);
+            if (menuVisible) onAccesibilidad(false);
+          }}
           menuId={id}
           botonRef={boton}
           textos={t.menuMovil}
         />
         <nav
           id={id}
-          className={`menu-home ${abierto ? "abierto" : ""}`}
+          className={`menu-home ${menuVisible ? "abierto" : ""}`}
         >
           <Link
             href="/"
@@ -92,7 +103,7 @@ export default function Navbar({
                 />
               </form>
             )}
-            <Accesibilidad textos={textos} />
+            <Accesibilidad textos={textos} abierto={accesibilidadAbierta} setAbierto={onAccesibilidad} />
             <SelectorIdioma
               idioma={idioma}
               onCambiar={onCambiarIdioma}
