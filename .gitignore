@@ -115,3 +115,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Next.js
+/.next/
+/out/
+/.npm-cache/
+/next-env.d.ts
+*.tsbuildinfo
