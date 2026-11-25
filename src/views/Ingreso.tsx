@@ -141,7 +141,17 @@ export default function Ingreso() {
               <label htmlFor="clave">{f.etiquetas.clave}</label>
               <div className="ingreso__clave">
                 <input id="clave" ref={claveRef} name="clave" disabled={enviando || segundos > 0} type={visible ? "text" : "password"} autoComplete="current-password" required value={clave} onChange={(e) => { setClave(e.target.value); setCampos((actual) => ({ ...actual, clave: undefined })); }} aria-invalid={Boolean(campos.clave)} aria-describedby={campos.clave ? "clave-error" : undefined} />
-                <button type="button" onClick={() => setVisible(!visible)} aria-label={f.botones.mostrarClave} aria-pressed={visible} title={visible ? f.botones.ocultarClave : f.botones.mostrarClave}><IconoEvento tipo="ojo" /></button>
+                <button
+                  type="button"
+                  onClick={() => setVisible((actual) => !actual)}
+                  aria-controls="clave"
+                  aria-label={visible ? f.botones.ocultarClave : f.botones.mostrarClave}
+                  title={visible ? f.botones.ocultarClave : f.botones.mostrarClave}
+                >
+                  <span className={visible ? "ingreso__ojo ingreso__ojo--tachado" : "ingreso__ojo"}>
+                    <IconoEvento tipo="ojo" />
+                  </span>
+                </button>
               </div>
               {campos.clave && <p id="clave-error">{campos.clave === "servidor" ? textos.formularios.validacion.revisaCampo : t.errores.claveObligatoria}</p>}
             </div>
