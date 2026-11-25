@@ -17,6 +17,17 @@
 .ingreso__clave { position: relative; }
 .ingreso__clave input { padding-inline-end: 48px; }
 .ingreso__clave button { position: absolute; inset: 0 0 0 auto; min-width: 44px; color: var(--suave); background: transparent; border: 0; display: grid; place-items: center; }
+.ingreso__ojo { position: relative; display: grid; place-items: center; }
+.ingreso__ojo--tachado::after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 2px;
+  border-radius: var(--radio-completo);
+  background: currentColor;
+  box-shadow: 0 -1px var(--superficie), 0 1px var(--superficie);
+  transform: rotate(-45deg);
+}
 .ingreso__opciones { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--espacio-2); font-size: .8125rem; margin-bottom: var(--espacio-4); }
 .ingreso__opciones input { margin: 0; accent-color: var(--acento); inline-size: 18px; block-size: 18px; }
 .ingreso__opciones label { gap: var(--espacio-2); }
