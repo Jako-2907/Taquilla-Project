@@ -9,6 +9,7 @@ import LayoutPublico from "../components/LayoutPublico/LayoutPublico";
 import TarjetaEvento from "../components/TarjetaEvento/TarjetaEvento";
 import { usePreferencias } from "../context/PreferenciasContext";
 import type { Categoria, DetalleEvento, Evento } from "../types/api";
+import "../components/SeccionEventos/SeccionEventos.css";
 import "./VistaDetalle.css";
 
 import Link from "next/link";
@@ -77,9 +78,9 @@ export default function VistaDetalle({ evento, relacionados, categorias }: {
           <h1>{evento.titulo}</h1>
           {evento.artistas?.length ? <p className="detalle-artistas">{evento.artistas.join(" · ")}</p> : null}
           <dl className="detalle-datos">
-            <div><IconoEvento tipo="fecha" /><div><dt>{t.info.fecha}</dt><dd>{fecha.format(new Date(evento.fecha))}</dd><dd className="detalle-dato-movil">{formatoHora(evento.fecha, evento.puertas)}</dd></div></div>
-            <div className="detalle-dato-hora"><IconoEvento tipo="hora" /><div><dt>{t.info.hora}</dt><dd>{formatoHora(evento.fecha, evento.puertas)}</dd></div></div>
-            <div><IconoEvento tipo="lugar" /><div><dt>{t.info.lugar}</dt><dd>{lugar.nombre}<span className="detalle-ciudad">, {lugar.ciudad}</span></dd><dd className="detalle-dato-movil">{direccion}</dd></div></div>
+            <div><span className="detalle-datos__icono"><IconoEvento tipo="fecha" /></span><div><dt>{t.info.fecha}</dt><dd>{fecha.format(new Date(evento.fecha))}</dd><dd className="detalle-dato-movil">{formatoHora(evento.fecha, evento.puertas)}</dd></div></div>
+            <div className="detalle-dato-hora"><span className="detalle-datos__icono"><IconoEvento tipo="hora" /></span><div><dt>{t.info.hora}</dt><dd>{formatoHora(evento.fecha, evento.puertas)}</dd></div></div>
+            <div><span className="detalle-datos__icono"><IconoEvento tipo="lugar" /></span><div><dt>{t.info.lugar}</dt><dd>{lugar.nombre}<span className="detalle-ciudad">, {lugar.ciudad}</span></dd><dd className="detalle-dato-movil">{direccion}</dd></div></div>
           </dl>
           <nav className="detalle-pestanas">
             <a href="#descripcion" aria-current={!politicas ? "location" : undefined} onClick={() => setPoliticas(false)}>{t.pestanas.descripcion}</a>
