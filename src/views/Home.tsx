@@ -15,12 +15,14 @@ import FiltrosExplorar from "../components/FiltrosExplorar/FiltrosExplorar";
 
 export default function Home() {
   const { idioma, textos, errorTextos, reintentarTextos } = usePreferencias();
-  const destacados = useRecurso<Listado<Evento>>(textos ? "/eventos/destacados" : null);
-  const categorias = useRecurso<Listado<Categoria>>(textos ? "/categorias" : null);
-  const ciudades = useRecurso<Listado<Ciudad>>(textos ? "/ciudades" : null);
+  const busqueda = useEventos();
+  const esExplorar = busqueda.filtros !== null;
+  const destacados = useRecurso<Listado<Evento>>(esExplorar ? null : "/eventos/destacados");
+  const categorias = useRecurso<Listado<Categoria>>("/categorias");
+  const ciudades = useRecurso<Listado<Ciudad>>("/ciudades");
   const ciudadPrincipal = ciudades.datos?.datos?.[0]?.nombre;
   const proximos = useRecurso<Listado<Evento>>(
-    textos && ciudadPrincipal
+    !esExplorar && ciudadPrincipal
       ? `/eventos?ciudad=${encodeURIComponent(ciudadPrincipal)}&pagina=1&porPagina=4&orden=fecha`
       : null,
   );
@@ -29,7 +31,6 @@ export default function Home() {
       ? (`/eventos?ciudad=${encodeURIComponent("Manizales")}&categoria=teatro&pagina=1&porPagina=3&orden=fecha`)
       : null,
   ); */
-  const busqueda = useEventos();
   useEffect(() => {
     if (!textos) return;
     const esExplorar = busqueda.filtros !== null;
@@ -47,7 +48,6 @@ export default function Home() {
 
   const pagina = textos.paginas.inicio;
   const paginaExplorar = textos.paginas.explorar;
-  const esExplorar = busqueda.filtros !== null;
   const cargarRetry = (recurso: { recargar: () => void }) => recurso.recargar();
   const eventos = busqueda.filtros
     ? busqueda.resultados
