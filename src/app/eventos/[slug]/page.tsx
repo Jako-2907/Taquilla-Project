@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { ErrorApi } from "../../../services/api";
+import ErrorEvento from "./error";
 import { obtenerEvento } from "./evento";
 import VistaDetalle from "../../../views/VistaDetalle";
 
@@ -10,6 +13,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function DetallePage({ params }: Props) {
-  const evento = await obtenerEvento((await params).slug);
-  return <VistaDetalle evento={evento} />;
+  const { slug } = await params;
+  try {
+    const evento = await obtenerEvento(slug);
+    return <VistaDetalle evento={evento} />;
+  } catch (error) {
+    if (error instanceof ErrorApi && error.status === 404 && error.codigo === "no_encontrado") notFound();
+    if (error instanceof ErrorApi && error.status && error.status >= 500) return <ErrorEvento />;
+    throw error;
+  }
 }
