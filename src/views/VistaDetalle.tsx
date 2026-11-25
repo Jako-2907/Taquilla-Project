@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import EstadoVista from "../components/EstadoVista/EstadoVista";
 import { useState } from "react";
 import AficheEvento from "../components/AficheEvento/AficheEvento";
@@ -8,17 +7,17 @@ import IconoEvento from "../components/IconoEvento/IconoEvento";
 import LayoutPublico from "../components/LayoutPublico/LayoutPublico";
 import TarjetaEvento from "../components/TarjetaEvento/TarjetaEvento";
 import { usePreferencias } from "../context/PreferenciasContext";
-import type { Categoria, DetalleEvento, Evento } from "../types/api";
+import { useRecurso } from "../hooks/useRecurso";
+import type { Categoria, DetalleEvento, Evento, Listado } from "../types/api";
 import "../components/SeccionEventos/SeccionEventos.css";
 import "./VistaDetalle.css";
 
 import Link from "next/link";
 
-export default function VistaDetalle({ evento, relacionados, categorias }: {
-  evento: DetalleEvento; relacionados: Evento[] | null; categorias: Categoria[];
-}) {
-  const router = useRouter();
+export default function VistaDetalle({ evento }: { evento: DetalleEvento }) {
   const { idioma, textos, errorTextos, reintentarTextos } = usePreferencias();
+  const relacionados = useRecurso<Listado<Evento>>(`/eventos/${encodeURIComponent(evento.slug)}/relacionados`);
+  const categorias = useRecurso<Listado<Categoria>>("/categorias");
   const [politicas, setPoliticas] = useState(false);
   const [expandido, setExpandido] = useState(false);
   if (!textos) return <EstadoVista estado={errorTextos ? "error" : "cargando"} error={errorTextos} onReintentar={reintentarTextos} />;
@@ -38,7 +37,8 @@ export default function VistaDetalle({ evento, relacionados, categorias }: {
   const punto = lugar.ubicacion ? `${lugar.ubicacion.lat},${lugar.ubicacion.lng}` : `${lugar.nombre} ${direccion}`;
   const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(punto)}`;
   const edad = String(evento.edadMinima);
-  const nombreCategoria = (item: Evento) => categorias.find(({ id }) => id === item.categoria)?.nombre ?? item.categoria;
+  const nombreCategoria = (item: Evento) => categorias.datos?.datos.find(({ id }) => id === item.categoria)?.nombre ?? item.categoria;
+  const tarjetas = relacionados.datos?.datos.slice(0, 4) ?? [];
   const disponibilidad = (cantidad: number, agotada: boolean) => agotada
     ? textos.componentes.etiquetas.disponibilidad.agotada
     : textos.componentes.etiquetas.disponibilidad.quedan.replace("{cantidad}", String(cantidad));
@@ -121,12 +121,13 @@ export default function VistaDetalle({ evento, relacionados, categorias }: {
                 <ul>{evento.localidades.map((localidad) => <li key={localidad.id}>{localidad.nombre} · {precio.format(localidad.precio)} · {disponibilidad(localidad.disponibles, localidad.agotada)}</li>)}</ul>
               )}
             </div>
-            {relacionados === null && <EstadoVista estado="error" onReintentar={() => router.refresh()} />}
-            {relacionados && relacionados.length > 0 && (
+            {relacionados.cargando && <EstadoVista estado="cargando" />}
+            {relacionados.error && <EstadoVista estado="error" error={relacionados.error} onReintentar={relacionados.recargar} />}
+            {tarjetas.length > 0 && (
               <section>
                 <h2>{t.relacionados.titulo}</h2>
                 <div className="eventos-grid">
-                  {relacionados.map((item) => <TarjetaEvento key={item.id} evento={item} categoria={nombreCategoria(item)} textos={textos.paginas.inicio.tarjeta} idioma={idioma} />)}
+                  {tarjetas.map((item) => <TarjetaEvento key={item.id} evento={item} categoria={nombreCategoria(item)} textos={textos.paginas.inicio.tarjeta} idioma={idioma} />)}
                 </div>
               </section>
             )}
