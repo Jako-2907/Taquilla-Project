@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  leerCookie,
   guardarCookie,
   borrarCookie,
 } from "../services/cookies";
@@ -27,16 +26,13 @@ interface Preferencias {
 
 const PreferenciasContext = createContext<Preferencias | null>(null);
 
-export function PreferenciasProvider({ children }: { children: ReactNode }) {
-  const [consentimiento, setConsentimiento] = useState<Consentimiento>(() => {
-    const valor = leerCookie("consentimiento");
-    return (valor === "aceptado" || valor === "rechazado") ? valor : null;
-  });
-  const [idioma, setIdioma] = useState<Idioma>(() =>
-    leerCookie("consentimiento") === "aceptado" && leerCookie("idioma") === "en"
-      ? "en"
-      : "es",
-  );
+export function PreferenciasProvider({ children, idiomaInicial, consentimientoInicial }: {
+  children: ReactNode;
+  idiomaInicial: Idioma;
+  consentimientoInicial: Consentimiento;
+}) {
+  const [consentimiento, setConsentimiento] = useState(consentimientoInicial);
+  const [idioma, setIdioma] = useState(idiomaInicial);
   const [error, setError] = useState(false);
   const [catalogo, setCatalogo] = useState<{ idioma: Idioma; textos: Textos } | null>(null);
   const [estados, setEstados] = useState<{ idioma: Idioma; textos: Textos["estados"] } | null>(null);
