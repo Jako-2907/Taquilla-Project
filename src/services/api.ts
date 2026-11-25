@@ -6,11 +6,11 @@ export class ErrorApi extends Error {
   }
 }
 
-export async function consultar<T>(ruta: string, { signal }: { signal?: AbortSignal } = {}): Promise<T> {
+export async function consultar<T>(ruta: string, { signal, headers }: { signal?: AbortSignal; headers?: Record<string, string> } = {}): Promise<T> {
   const base = proyecto.api.replace(/\/+$/, "");
   const respuesta = await fetch(`${base}${ruta}`, {
     signal,
-    headers: { Accept: "application/json" },
+    headers: { Accept: "application/json", ...headers },
   });
   const tipo = respuesta.headers.get("content-type") || "";
   if (!tipo.includes("application/json")) {
