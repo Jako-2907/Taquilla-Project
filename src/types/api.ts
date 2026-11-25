@@ -13,6 +13,14 @@ export type Idioma = "es" | "en";
 export type Consentimiento = "aceptado" | "rechazado" | null;
 export type TipoCuenta = "registro" | "ingresar";
 
+export interface Usuario {
+  id: string;
+  nombre: string;
+  correo: string;
+  correoVerificado: boolean;
+  rol: string;
+}
+
 export interface Afiche {
   color1: string;
   color2: string;
