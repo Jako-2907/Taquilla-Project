@@ -30,6 +30,22 @@ export interface Evento {
   precioDesde: number;
 }
 
+export interface DetalleEvento extends Evento {
+  descripcion: string;
+  puertas?: string | null;
+  edadMinima: number;
+  artistas?: string[] | null;
+  recinto: Evento["recinto"] & {
+    parqueadero?: string | null;
+    ubicacion?: { lat: number; lng: number } | null;
+  };
+  funciones: {
+    id: string; fecha: string; puertas?: string | null; disponibles: number; agotada: boolean;
+    localidades?: { localidadId: string; cupo: number; disponibles: number }[];
+  }[];
+  localidades: { id: string; nombre: string; precio: number; disponibles: number; agotada: boolean }[];
+}
+
 export interface Categoria {
   id: string;
   nombre: string;

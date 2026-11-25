@@ -62,10 +62,6 @@ export function PreferenciasProvider({ children }: { children: ReactNode }) {
       });
     return () => controlador.abort();
   }, [idioma, intentoTextos]);
-  useEffect(() => {
-    const titulo = textos?.paginas?.inicio?.seo?.titulo;
-    if (titulo) document.title = titulo;
-  }, [textos]);
   function cambiarIdioma(valor: Idioma) {
     setIdioma(valor);
     try {
