@@ -23,9 +23,6 @@ pnpm-debug.log*
 Thumbs.db
 Desktop.ini
 
-# Notas internas generadas durante el trabajo con el agente
-/IA.md
-
 ### Linux ###
 *~
 
@@ -115,3 +112,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Next.js
+/.next/
+/out/
+/.npm-cache/
+/next-env.d.ts
+*.tsbuildinfo

@@ -1,0 +1,108 @@
+import { useEffect, useMemo, useState } from "react";
+import { consultar } from "../services/api";
+
+import type { Evento, Filtros, Listado, Paginacion } from "../types/api";
+
+type Resultado = Listado<Evento> & { paginacion: Paginacion | null };
+
+export function useEventos() {
+  const [filtros, setFiltros] = useState<Filtros | null>(() => {
+    if (typeof window === "undefined" || window.location.pathname !== "/explorar") return null;
+    const params = new URLSearchParams(window.location.search);
+    return {
+      consulta: params.get("q") ?? "",
+      categoria: params.get("categoria") ?? "",
+      ciudad: params.get("ciudad") ?? "",
+      orden: params.get("orden") ?? "fecha",
+    };
+  });
+  const [pagina, setPagina] = useState(() =>
+    typeof window === "undefined" ? 1 : Math.max(1, Number(new URLSearchParams(window.location.search).get("pagina")) || 1),
+  );
+  const [resultado, setResultado] = useState<Resultado>({ datos: [], paginacion: null });
+  const [solicitada, setSolicitada] = useState<{ ruta: string; intento: number } | null>(null);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [intento, setIntento] = useState(0);
+  const consulta = useMemo(() => {
+    if (!filtros) return null;
+    const parametros = new URLSearchParams({ pagina: String(pagina), porPagina: "12" });
+    if (filtros.consulta) parametros.set("q", filtros.consulta);
+    if (filtros.categoria) parametros.set("categoria", filtros.categoria);
+    if (filtros.ciudad) parametros.set("ciudad", filtros.ciudad);
+    if (filtros.orden) parametros.set("orden", filtros.orden);
+    return `/eventos?${parametros.toString()}`;
+  }, [filtros, pagina]);
+
+  useEffect(() => {
+    if (!consulta) return;
+    const params = new URLSearchParams(consulta.split("?")[1] ?? "");
+    const siguiente = `/explorar?${params.toString()}`;
+    if (`${window.location.pathname}${window.location.search}` !== siguiente) {
+      window.history.replaceState({}, "", siguiente);
+    }
+  }, [consulta, filtros]);
+
+  useEffect(() => {
+    function sincronizarDesdeUrl() {
+      if (window.location.pathname !== "/explorar") {
+        setFiltros(null);
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      setPagina(Math.max(1, Number(params.get("pagina")) || 1));
+      setFiltros({
+        consulta: params.get("q") ?? "",
+        categoria: params.get("categoria") ?? "",
+        ciudad: params.get("ciudad") ?? "",
+        orden: params.get("orden") ?? "fecha",
+      });
+    }
+    if (window.location.pathname === "/explorar") sincronizarDesdeUrl();
+    window.addEventListener("popstate", sincronizarDesdeUrl);
+    return () => window.removeEventListener("popstate", sincronizarDesdeUrl);
+  }, []);
+
+  useEffect(() => {
+    if (!consulta) return;
+    const controlador = new AbortController();
+    setSolicitada({ ruta: consulta, intento });
+    setCargando(true);
+    setError(null);
+    consultar<Resultado>(consulta, { signal: controlador.signal })
+      .then((respuesta) => {
+        if (!Array.isArray(respuesta?.datos)) {
+          throw new Error("La API no devolvió la lista de eventos esperada.");
+        }
+        setResultado(respuesta);
+      })
+      .catch((errorSolicitud) => {
+        if (errorSolicitud.name !== "AbortError") setError(errorSolicitud);
+      })
+      .finally(() => {
+        if (!controlador.signal.aborted) setCargando(false);
+      });
+    return () => controlador.abort();
+  }, [consulta, intento]);
+
+  function buscar(valores: Filtros) {
+    window.history.pushState({}, "", "/explorar");
+    setPagina(1);
+    setFiltros({ ...valores });
+    document.getElementById("eventos")?.scrollIntoView({ block: "start" });
+  }
+
+  const vigente = solicitada?.ruta === consulta && solicitada.intento === intento;
+  return {
+    filtros,
+    resultados: vigente ? resultado.datos : [],
+    paginacion: vigente ? resultado.paginacion : null,
+    cargando: consulta !== null && (!vigente || cargando),
+    error: vigente ? error : null,
+    buscar,
+    setFiltros: buscar,
+    cambiarPagina: setPagina,
+    recargar: () => setIntento((valor) => valor + 1),
+    filtrarCategoria: (categoria: string) => buscar({ ...filtros, categoria }),
+  };
+}

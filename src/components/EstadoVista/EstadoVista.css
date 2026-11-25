@@ -1,0 +1,3 @@
+.estado-vista { display: grid; place-content: center; justify-items: center; min-height: 220px; gap: var(--espacio-3); padding: var(--espacio-6); text-align: center; }
+.estado-vista p { margin: 0; }
+.estado-vista .indicador-carga { width: 24px; height: 24px; }

@@ -1,134 +1,60 @@
-.pie-home {
-  background: var(--superficie);
+﻿.pie-home {
   padding: var(--espacio-12) 0 var(--espacio-6);
+  background: var(--fondo-inverso);
+  color: var(--texto-inverso);
 }
 .columnas-pie {
   display: grid;
-  grid-template-columns: 2.6fr 1fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) repeat(3, max-content);
   gap: var(--espacio-12);
 }
 .columnas-pie p {
-  max-width: 300px;
-  color: var(--suave);
-  margin-top: var(--espacio-3);
-  font-size: 0.875rem;
+  max-width: 21rem;
+  margin: var(--espacio-3) 0 0;
+  color: var(--texto-inverso-suave);
+  font-size: .875rem;
 }
 .columnas-pie h3 {
-  color: var(--suave);
-  font-family: var(--fuente-texto);
-  font-size: 0.8125rem;
+  margin: 0 0 var(--espacio-3);
+  color: var(--texto-inverso-suave);
+  font-size: .75rem;
   font-weight: 400;
-  margin-bottom: var(--espacio-3);
 }
 .columnas-pie > div > a:not(.marca-home),
-.columnas-pie button {
+.columnas-pie button,
+.pie-terminos {
   display: block;
   margin-block: var(--espacio-2);
-  font-size: 0.8125rem;
+  color: inherit;
+  font-size: .875rem;
 }
 .columnas-pie button {
-  color: var(--tinta);
+  padding: 0;
   border: 0;
   background: transparent;
-  padding: 0;
-  text-align: left;
+  text-align: start;
 }
 .columnas-pie button:hover,
-.columnas-pie > div > a:not(.marca-home):hover {
-  text-decoration: underline;
-}
+.columnas-pie a:not(.marca-home):hover { text-decoration: underline; }
+.pie-home :is(a, button):focus-visible { outline-color: var(--texto-inverso); }
 .pie-creditos {
-  border-top: 1px solid var(--borde);
-  margin-top: var(--espacio-8);
-  padding-top: 20px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: var(--espacio-4);
-  color: var(--suave);
-  font-size: 0.75rem;
-}
-.pie-creditos .cookies > .cookies-boton {
-  background: transparent;
-  color: var(--suave);
-  border: 0;
-  font-size: 0.75rem;
-  padding: var(--espacio-2) 0;
+  margin-top: var(--espacio-8);
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--borde-inverso);
+  color: var(--texto-inverso-suave);
+  font-size: .75rem;
 }
 
 @media (max-width: 900px) {
-  .columnas-pie {
-    gap: var(--espacio-6);
-    grid-template-columns: 2fr 1fr 1fr;
-  }
+  .columnas-pie { gap: var(--espacio-6); }
 }
 
-@media (max-width: 900px) {
-  .columnas-pie > div:last-child {
-    grid-column: 2 / 4;
-  }
-}
 @media (max-width: 640px) {
-  .columnas-pie {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 640px) {
-  .columnas-pie > div:first-child {
-    grid-column: 1 / -1;
-  }
-}
-@media (max-width: 640px) {
-  .columnas-pie > div:last-child {
-    grid-column: auto;
-  }
-}
-@media (max-width: 640px) {
-  .pie-creditos {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-.taquilla .pie-home {
-  --superficie: var(--fondo-inverso);
-  --tinta: var(--texto-inverso);
-  --suave: var(--texto-inverso-suave);
-  --borde: var(--borde-inverso);
-  color: var(--texto-inverso);
-}
-.taquilla .pie-home .emblema {
-  background: var(--fondo-superficie);
-  color: var(--texto-principal);
-}
-.taquilla .pie-home a:focus-visible,
-.taquilla .pie-home button:focus-visible {
-  outline-color: var(--texto-inverso);
-}
-
-.columnas-pie {
-  grid-template-columns: 2fr 1fr 1fr;
-}
-@media (max-width: 640px) {
-  .columnas-pie {
-    grid-template-columns: 1fr 1fr;
-  }
-  .columnas-pie > div:first-child {
-    grid-column: 1 / -1;
-  }
-  .columnas-pie > div:last-child {
-    grid-column: auto;
-  }
-}
-
-.landing .columnas-pie {
-  grid-template-columns: 2fr 1fr 1fr;
-}
-@media (max-width: 640px) {
-  .landing .columnas-pie {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.pie-creditos .enlace-home {
-  color: var(--suave) !important;
+  .pie-home { padding-top: var(--espacio-8); }
+  .columnas-pie { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .columnas-pie > div:first-child { grid-column: 1 / -1; }
+  .pie-creditos { flex-direction: column; gap: var(--espacio-2); }
 }
