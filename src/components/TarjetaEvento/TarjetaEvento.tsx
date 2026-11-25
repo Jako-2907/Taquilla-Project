@@ -12,6 +12,8 @@ const moneda = (valor: number) =>
 import type { Evento, Idioma } from "../../types/api";
 import type { Textos } from "../../types/textos";
 
+import Link from "next/link";
+
 export default function TarjetaEvento({ evento, categoria, textos, idioma }: { evento: Evento; categoria: string; textos: Textos["paginas"]["inicio"]["tarjeta"]; idioma: Idioma }) {
   const fecha = new Date(evento.fecha);
   const tieneHora = typeof evento.fecha === "string" && /T\d{2}:\d{2}/.test(evento.fecha);
@@ -41,13 +43,13 @@ export default function TarjetaEvento({ evento, categoria, textos, idioma }: { e
             <small>{textos.desde}</small>
             <strong>{moneda(evento.precioDesde)}</strong>
           </div>
-          <a
+          <Link
             className="boton-home secundario"
             href={`/eventos/${evento.slug}`}
             aria-label={`${textos.botones.verEvento}: ${evento.titulo}`}
           >
             {textos.botones.verEvento}
-          </a>
+          </Link>
         </div>
       </div>
     </article>

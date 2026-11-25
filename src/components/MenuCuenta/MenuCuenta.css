@@ -1,0 +1,7 @@
+.menu-cuenta { position: relative; }
+.menu-cuenta summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: var(--espacio-2); border: 1px solid var(--borde-fuerte); border-radius: var(--radio-completo); padding: var(--espacio-2) var(--espacio-3); }
+.menu-cuenta summary::-webkit-details-marker { display: none; }
+.menu-cuenta__contenido { position: absolute; z-index: 2; inset: calc(100% + 8px) 0 auto auto; min-width: max-content; background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio-md); box-shadow: var(--sombra-flotante); padding: var(--espacio-2); }
+.menu-cuenta__contenido button { width: 100%; background: var(--superficie); color: var(--tinta); border: 0; padding: var(--espacio-2) var(--espacio-3); text-align: start; }
+.menu-cuenta__contenido p { max-width: 14rem; margin: var(--espacio-2); }
+@media (max-width: 960px) { .menu-cuenta__contenido { position: static; box-shadow: none; border: 0; min-width: 0; } }

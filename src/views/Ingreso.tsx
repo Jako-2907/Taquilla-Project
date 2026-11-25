@@ -7,6 +7,8 @@ import EstadoVista from "../components/EstadoVista/EstadoVista";
 import IconoEvento from "../components/IconoEvento/IconoEvento";
 import Marca from "../components/Marca/Marca";
 import SaltarContenido from "../components/SaltarContenido/SaltarContenido";
+import { useSesion } from "../context/SesionContext";
+import type { Usuario } from "../types/api";
 import { usePreferencias } from "../context/PreferenciasContext";
 import { proyecto } from "../config/proyecto";
 import "./Ingreso.css";
@@ -22,6 +24,7 @@ function vencimiento(retryAfter: string | null) {
 
 export default function Ingreso() {
   const router = useRouter();
+  const { iniciarSesion } = useSesion();
   const { textos, errorTextos, reintentarTextos } = usePreferencias();
   const [visible, setVisible] = useState(false);
   const [correo, setCorreo] = useState("");
@@ -79,6 +82,8 @@ export default function Ingreso() {
         body: JSON.stringify({ correo: correo.trim(), clave, mantener }),
       });
       if (respuesta.ok) {
+        const datos: { usuario: Usuario } = await respuesta.json();
+        iniciarSesion(datos.usuario);
         router.push("/");
         return;
       }

@@ -11,6 +11,8 @@ const moneda = (valor: number) =>
 import type { Evento, Idioma } from "../../types/api";
 import type { Textos } from "../../types/textos";
 
+import Link from "next/link";
+
 export default function EventoDestacado({ evento, textos, idioma }: { evento?: Evento; textos: Textos["paginas"]["inicio"]["hero"]["destacado"]; idioma: Idioma }) {
   if (!evento) return null;
   const tieneHora = typeof evento.fecha === "string" && /T\d{2}:\d{2}/.test(evento.fecha);
@@ -32,12 +34,12 @@ export default function EventoDestacado({ evento, textos, idioma }: { evento?: E
           <strong>
             {textos.desde.replace("{precio}", moneda(evento.precioDesde))}
           </strong>
-          <a
+          <Link
             className="boton-home primario"
             href={`/eventos/${evento.slug}`}
           >
             {textos.botones.verEvento}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

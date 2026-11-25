@@ -21,7 +21,7 @@ export default function EstadoVista({ estado, onReintentar, error }: {
       </div>
     );
   }
-  const contenido = error instanceof TypeError ? catalogo?.sinConexion : catalogo?.error;
+  const contenido = (error instanceof TypeError || (typeof navigator !== "undefined" && !navigator.onLine)) ? catalogo?.sinConexion : catalogo?.error;
   return (
     <div className="estado-vista" role="alert">
       {contenido && <><p><strong>{contenido.titulo}</strong></p><p>{contenido.texto}</p></>}

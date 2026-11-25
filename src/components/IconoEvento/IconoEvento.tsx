@@ -20,6 +20,7 @@ const iconos = {
   menu: "menu",
   cerrar: "x",
   persona: "person",
+  usuario: "user",
   flecha: "arrowr",
   flechaAtras: "arrowl",
 };

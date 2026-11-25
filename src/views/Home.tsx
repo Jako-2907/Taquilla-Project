@@ -1,6 +1,6 @@
 "use client";
 
-import type { Categoria, Ciudad, Evento, Filtros, Listado, TipoCuenta } from "../types/api";
+import type { Categoria, Ciudad, Evento, Filtros, Listado } from "../types/api";
 import { useEffect } from "react";
 import LayoutPublico from "../components/LayoutPublico/LayoutPublico";
 import HeroTaquilla from "../components/HeroTaquilla/HeroTaquilla";
@@ -15,9 +15,6 @@ import FiltrosExplorar from "../components/FiltrosExplorar/FiltrosExplorar";
 
 export default function Home() {
   const { idioma, textos, errorTextos, reintentarTextos } = usePreferencias();
-  const abrirCuenta = (tipo: TipoCuenta) => {
-    window.location.assign(tipo === "registro" ? "/crear-cuenta" : "/iniciar-sesion");
-  };
   const destacados = useRecurso<Listado<Evento>>(textos ? "/eventos/destacados" : null);
   const categorias = useRecurso<Listado<Categoria>>(textos ? "/categorias" : null);
   const ciudades = useRecurso<Listado<Ciudad>>(textos ? "/ciudades" : null);
@@ -89,7 +86,7 @@ export default function Home() {
   }
 
   return (
-    <LayoutPublico destino="/explorar" onCuenta={abrirCuenta} onExplorar={abrirExplorar}>
+    <LayoutPublico destino="/explorar" onExplorar={abrirExplorar}>
       {!esExplorar && (
         <HeroTaquilla
           textos={pagina.hero}

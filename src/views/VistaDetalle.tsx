@@ -11,14 +11,16 @@ import { usePreferencias } from "../context/PreferenciasContext";
 import type { Categoria, DetalleEvento, Evento } from "../types/api";
 import "./VistaDetalle.css";
 
+import Link from "next/link";
+
 export default function VistaDetalle({ evento, relacionados, categorias }: {
   evento: DetalleEvento; relacionados: Evento[] | null; categorias: Categoria[];
 }) {
   const router = useRouter();
-  const { idioma, textos } = usePreferencias();
+  const { idioma, textos, errorTextos, reintentarTextos } = usePreferencias();
   const [politicas, setPoliticas] = useState(false);
   const [expandido, setExpandido] = useState(false);
-  if (!textos) return <EstadoVista estado="cargando" />;
+  if (!textos) return <EstadoVista estado={errorTextos ? "error" : "cargando"} error={errorTextos} onReintentar={reintentarTextos} />;
   const t = textos.paginas.detalleEvento;
   const acciones = textos.general.acciones;
   const zona = { timeZone: "America/Bogota" };
@@ -54,16 +56,16 @@ export default function VistaDetalle({ evento, relacionados, categorias }: {
     <LayoutPublico>
       <article className="ancho-home detalle-evento">
         <nav className="detalle-migas">
-          <a href="/">{textos.componentes.migas.inicio}</a>
+          <Link href="/">{textos.componentes.migas.inicio}</Link>
           <IconoEvento tipo="chevron" />
-          <a href="/explorar">{textos.componentes.migas.explorar}</a>
+          <Link href="/explorar">{textos.componentes.migas.explorar}</Link>
           <IconoEvento tipo="chevron" />
           <span aria-current="page">{evento.titulo}</span>
         </nav>
         <div className="detalle-portada">
           <AficheEvento afiche={evento.afiche} className="detalle-afiche" />
           <div className="detalle-portada__acciones">
-            <a href="/explorar" aria-label={acciones.volver}><IconoEvento tipo="chevronAtras" /></a>
+            <Link href="/explorar" aria-label={acciones.volver}><IconoEvento tipo="chevronAtras" /></Link>
             <button type="button" aria-label={acciones.compartir} onClick={compartir}><IconoEvento tipo="compartir" /></button>
           </div>
         </div>

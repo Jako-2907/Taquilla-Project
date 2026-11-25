@@ -23,9 +23,6 @@ pnpm-debug.log*
 Thumbs.db
 Desktop.ini
 
-# Notas internas generadas durante el trabajo con el agente
-/IA.md
-
 ### Linux ###
 *~
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { usePreferencias } from "../../context/PreferenciasContext";
 import { proyecto } from "../../config/proyecto";
 import Navbar from "../Navbar/Navbar";
@@ -10,7 +11,9 @@ import "./LayoutPublico.css";
 
 import type { NavegacionProps } from "../../types/api";
 
-export default function LayoutPublico({ destino = "/explorar", onCuenta = (tipo) => { window.location.assign(tipo === "registro" ? "/crear-cuenta" : "/iniciar-sesion"); }, onExplorar, children }: Partial<Pick<NavegacionProps, "destino" | "onCuenta" | "onExplorar">> & { children: React.ReactNode }) {
+export default function LayoutPublico({ destino = "/explorar", onCuenta, onExplorar, children }: Partial<Pick<NavegacionProps, "destino" | "onCuenta" | "onExplorar">> & { children: React.ReactNode }) {
+  const router = useRouter();
+  const abrirCuenta: NavegacionProps["onCuenta"] = onCuenta ?? ((tipo) => router.push(tipo === "registro" ? "/crear-cuenta" : "/iniciar-sesion"));
   const { idioma, cambiarIdioma, textos } = usePreferencias();
   if (!textos) return null;
 
@@ -23,7 +26,7 @@ export default function LayoutPublico({ destino = "/explorar", onCuenta = (tipo)
         idioma={idioma}
         onCambiarIdioma={cambiarIdioma}
         destino={destino}
-        onCuenta={onCuenta}
+        onCuenta={abrirCuenta}
         onExplorar={onExplorar}
         textos={textos}
       />
@@ -34,7 +37,7 @@ export default function LayoutPublico({ destino = "/explorar", onCuenta = (tipo)
         nombre={proyecto.nombre}
         tipo={proyecto.id}
         destino={destino}
-        onCuenta={onCuenta}
+        onCuenta={abrirCuenta}
         onExplorar={onExplorar}
         textos={textos}
       />

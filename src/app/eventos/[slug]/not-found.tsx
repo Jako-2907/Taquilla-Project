@@ -1,11 +1,13 @@
 "use client";
 
+import EstadoVista from "../../../components/EstadoVista/EstadoVista";
 import { usePreferencias } from "../../../context/PreferenciasContext";
 import LayoutPublico from "../../../components/LayoutPublico/LayoutPublico";
 
 export default function EventoNoEncontrado() {
-  const textos = usePreferencias().textos?.paginas.detalleEvento.noEncontrado;
-  if (!textos) return null;
+  const { textos: catalogo, errorTextos, reintentarTextos } = usePreferencias();
+  const textos = catalogo?.paginas.detalleEvento.noEncontrado;
+  if (!textos) return <EstadoVista estado={errorTextos ? "error" : "cargando"} error={errorTextos} onReintentar={reintentarTextos} />;
   return (
     <LayoutPublico>
       <section className="ancho-home estado-inicial">

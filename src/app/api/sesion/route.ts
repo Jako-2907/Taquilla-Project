@@ -5,6 +5,43 @@ import type { Usuario } from "../../../types/api";
 const sinCache = { "Cache-Control": "no-store" };
 const DURACION_SESION = 12 * 60 * 60;
 
+function sinSesion() {
+  const respuesta = NextResponse.json({ error: { codigo: "no_autenticado" } }, { status: 401, headers: sinCache });
+  respuesta.cookies.delete("sesion");
+  return respuesta;
+}
+
+async function consultarSesion(request: NextRequest, method: "GET" | "DELETE") {
+  const token = request.cookies.get("sesion")?.value;
+  if (!token) return method === "GET" ? sinSesion() : new NextResponse(null, { status: 204, headers: sinCache });
+
+  try {
+    const respuesta = await fetch(`${apiServidor()}/sesion`, {
+      method, cache: "no-store", headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    });
+    if (method === "DELETE" && (respuesta.ok || respuesta.status === 401)) {
+      const salida = new NextResponse(null, { status: 204, headers: sinCache });
+      salida.cookies.delete("sesion");
+      return salida;
+    }
+    if (respuesta.status === 401) return sinSesion();
+    if (!respuesta.ok) return new NextResponse(null, { status: respuesta.status, headers: sinCache });
+    const datos: { usuario: Usuario } = await respuesta.json();
+    return NextResponse.json({ usuario: datos.usuario }, { headers: sinCache });
+  } catch {
+    return new NextResponse(null, { status: 502, headers: sinCache });
+  }
+}
+
+export function GET(request: NextRequest) {
+  return consultarSesion(request, "GET");
+}
+
+export function DELETE(request: NextRequest) {
+  if (!publicacionSegura(request)) return new NextResponse(null, { status: 403, headers: sinCache });
+  return consultarSesion(request, "DELETE");
+}
+
 function publicacionSegura(request: NextRequest) {
   const origen = request.headers.get("origin");
   return request.headers.get("sec-fetch-site") !== "cross-site" && (!origen || origen === request.nextUrl.origin);

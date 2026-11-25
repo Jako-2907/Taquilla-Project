@@ -1,5 +1,7 @@
 import { usePathname } from "next/navigation";
 import { useId, useRef, useState } from "react";
+import { useSesion } from "../../context/SesionContext";
+import MenuCuenta from "../MenuCuenta/MenuCuenta";
 import Marca from "../Marca/Marca";
 import MenuMovil from "../MenuMovil/MenuMovil";
 import SelectorIdioma from "../SelectorIdioma/SelectorIdioma";
@@ -7,6 +9,8 @@ import IconoEvento from "../IconoEvento/IconoEvento";
 import Accesibilidad from "../Accesibilidad/Accesibilidad";
 import "./Navbar.css";
 import type { Idioma, NavegacionProps } from "../../types/api";
+
+import Link from "next/link";
 
 export default function Navbar({
   nombre,
@@ -21,6 +25,7 @@ export default function Navbar({
   const [abierto, setAbierto] = useState(false);
   const boton = useRef<HTMLButtonElement>(null);
   const id = useId();
+  const { usuario, verificando } = useSesion();
   const t = textos;
   const ruta = usePathname();
   return (
@@ -35,9 +40,9 @@ export default function Navbar({
     >
       <div className="ancho-home fila-cabecera">
         <Marca nombre={t.navbar.logo.texto} tipo={tipo} etiqueta={t.navbar.logo.aria} />
-        <button className="ingreso-movil" onClick={() => onCuenta("ingresar")}>
+        {!verificando && !usuario && <button className="ingreso-movil" onClick={() => onCuenta("ingresar")}>
           {t.navbar.botones.ingresar}
-        </button>
+        </button>}
         <MenuMovil
           abierto={abierto}
           onAlternar={() => setAbierto(!abierto)}
@@ -49,14 +54,14 @@ export default function Navbar({
           id={id}
           className={`menu-home ${abierto ? "abierto" : ""}`}
         >
-          <a
+          <Link
             href="/"
             aria-current={ruta === "/" ? "page" : undefined}
             onClick={() => setAbierto(false)}
           >
             {t.navbar.enlaces.inicio}
-          </a>
-          <a
+          </Link>
+          <Link
             href={destino}
             aria-current={ruta === "/explorar" ? "page" : undefined}
             onClick={(evento) => {
@@ -74,7 +79,7 @@ export default function Navbar({
             }}
           >
             {t.navbar.enlaces.explorar}
-          </a>
+          </Link>
           <div className="acciones-home">
             {tipo === "taquilla" && (
               <form className="buscador-cabecera" action="/explorar" method="get" role="search">
@@ -94,6 +99,7 @@ export default function Navbar({
               etiqueta={t.navbar.aria.idioma}
               textos={t.idioma}
             />
+            {usuario ? <MenuCuenta /> : !verificando && <>
             <button
               className="ingresar-home"
               onClick={() => onCuenta("ingresar")}
@@ -106,6 +112,7 @@ export default function Navbar({
             >
               {t.navbar.botones.crearCuenta}
             </button>
+            </>}
           </div>
         </nav>
       </div>

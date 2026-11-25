@@ -21,8 +21,8 @@
 .ingreso__opciones input { margin: 0; accent-color: var(--acento); inline-size: 18px; block-size: 18px; }
 .ingreso__opciones label { gap: var(--espacio-2); }
 .ingreso a { text-underline-offset: .18em; }
-.ingreso__opciones a, .ingreso__registro a { text-decoration: underline; }
-.ingreso__enviar { width: 100%; min-height: 46px; }
+.ingreso__opciones a, .ingreso__registro a { color: var(--tinta); text-decoration: underline; }
+.ingreso__enviar.boton-home { width: 100%; min-height: 46px; border-radius: var(--radio-md); font-weight: 500; }
 .ingreso__enviar:disabled { opacity: .8; cursor: wait; }
 .ingreso__enviar .indicador-carga { width: 16px; height: 16px; border-color: currentColor; border-inline-end-color: transparent; }
 .ingreso__registro { font-size: .8125rem; text-align: center; margin: var(--espacio-4) 0 0; }
