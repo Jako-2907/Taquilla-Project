@@ -6,9 +6,7 @@ const sinCache = { "Cache-Control": "no-store" };
 const DURACION_SESION = 12 * 60 * 60;
 
 function sinSesion() {
-  const respuesta = NextResponse.json({ error: { codigo: "no_autenticado" } }, { status: 401, headers: sinCache });
-  respuesta.cookies.delete("sesion");
-  return respuesta;
+  return NextResponse.json({ error: { codigo: "no_autenticado" } }, { status: 401, headers: sinCache });
 }
 
 async function consultarSesion(request: NextRequest, method: "GET" | "DELETE") {

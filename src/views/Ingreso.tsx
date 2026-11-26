@@ -145,6 +145,7 @@ export default function Ingreso() {
                   type="button"
                   onClick={() => setVisible((actual) => !actual)}
                   aria-controls="clave"
+                  aria-pressed={visible}
                   aria-label={visible ? f.botones.ocultarClave : f.botones.mostrarClave}
                   title={visible ? f.botones.ocultarClave : f.botones.mostrarClave}
                 >

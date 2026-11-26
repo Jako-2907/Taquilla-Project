@@ -38,8 +38,8 @@ export default function VistaDetalle({ evento }: { evento: DetalleEvento }) {
   const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(punto)}`;
   const edad = String(evento.edadMinima);
   const nombreCategoria = (item: Evento) => categorias.datos?.datos.find(({ id }) => id === item.categoria)?.nombre ?? item.categoria;
-  const tarjetas = relacionados.datos?.datos.slice(0, 4) ?? [];
-  const disponibilidad = (cantidad: number, agotada: boolean) => agotada
+  const tarjetas = relacionados.datos?.datos ?? [];
+  const disponibilidad = (cantidad: number, agotada: boolean) => agotada || cantidad === 0
     ? textos.componentes.etiquetas.disponibilidad.agotada
     : textos.componentes.etiquetas.disponibilidad.quedan.replace("{cantidad}", String(cantidad));
 
@@ -104,34 +104,37 @@ export default function VistaDetalle({ evento }: { evento: DetalleEvento }) {
               <h2>{t.politicas.titulo}</h2>
               <ul>{[t.politicas.documento, evento.edadMinima ? t.politicas.edad.replace("{edad}", edad) : t.politicas.todoPublico, t.politicas.reembolso, t.politicas.ingreso, t.politicas.objetos].map((texto) => <li key={texto}>{texto}</li>)}</ul>
             </section>
-            <div className="detalle-funciones">
-              {evento.funciones?.map((funcion) => (
-                <section key={funcion.id}>
-                  <h2>{fecha.format(new Date(funcion.fecha))} · {formatoHora(funcion.fecha, funcion.puertas)}</h2>
-                  <p>{disponibilidad(funcion.disponibles, funcion.agotada)}</p>
+          </div>
+          <div className="detalle-funciones">
+            {evento.funciones?.map((funcion) => (
+              <section key={funcion.id}>
+                <h2>{fecha.format(new Date(funcion.fecha))} · {formatoHora(funcion.fecha, funcion.puertas)}</h2>
+                <p>{disponibilidad(funcion.disponibles, funcion.agotada)}</p>
+                {funcion.localidades?.length ? (
                   <ul>
-                    {evento.localidades?.map((localidad) => {
-                      const cantidad = funcion.localidades?.find(({ localidadId }) => localidadId === localidad.id)?.disponibles;
-                      return <li key={localidad.id}>{localidad.nombre} · {precio.format(localidad.precio)} · {disponibilidad(cantidad ?? localidad.disponibles, cantidad === undefined ? localidad.agotada : cantidad === 0)}</li>;
+                    {funcion.localidades.map(({ localidadId, disponibles }) => {
+                      const localidad = evento.localidades?.find(({ id }) => id === localidadId);
+                      if (!localidad) return null;
+                      return <li key={localidad.id}>{localidad.nombre} · {precio.format(localidad.precio)} · {disponibilidad(disponibles, funcion.agotada || localidad.agotada)}</li>;
                     })}
                   </ul>
-                </section>
-              ))}
-              {!evento.funciones?.length && evento.localidades?.length > 0 && (
-                <ul>{evento.localidades.map((localidad) => <li key={localidad.id}>{localidad.nombre} · {precio.format(localidad.precio)} · {disponibilidad(localidad.disponibles, localidad.agotada)}</li>)}</ul>
-              )}
-            </div>
-            {relacionados.cargando && <EstadoVista estado="cargando" />}
-            {relacionados.error && <EstadoVista estado="error" error={relacionados.error} onReintentar={relacionados.recargar} />}
-            {tarjetas.length > 0 && (
-              <section>
-                <h2>{t.relacionados.titulo}</h2>
-                <div className="eventos-grid">
-                  {tarjetas.map((item) => <TarjetaEvento key={item.id} evento={item} categoria={nombreCategoria(item)} textos={textos.paginas.inicio.tarjeta} idioma={idioma} />)}
-                </div>
+                ) : null}
               </section>
+            ))}
+            {!evento.funciones?.some((funcion) => funcion.localidades?.length) && evento.localidades?.length > 0 && (
+              <ul>{evento.localidades.map((localidad) => <li key={localidad.id}>{localidad.nombre} · {precio.format(localidad.precio)} · {disponibilidad(localidad.disponibles, localidad.agotada)}</li>)}</ul>
             )}
           </div>
+          {relacionados.cargando && <EstadoVista estado="cargando" />}
+          {relacionados.error && <EstadoVista estado="error" error={relacionados.error} onReintentar={relacionados.recargar} />}
+          {tarjetas.length > 0 && (
+            <section>
+              <h2>{t.relacionados.titulo}</h2>
+              <div className="eventos-grid">
+                {tarjetas.map((item) => <TarjetaEvento key={item.id} evento={item} categoria={nombreCategoria(item)} textos={textos.paginas.inicio.tarjeta} idioma={idioma} />)}
+              </div>
+            </section>
+          )}
         </div>
       </article>
     </LayoutPublico>
